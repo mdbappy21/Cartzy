@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:cartzy/presentation/ui/screens/complete_profile_screen.dart';
 import 'package:cartzy/presentation/ui/utills/app_colors.dart';
 import 'package:cartzy/presentation/ui/widgets/app_logo_widget.dart';
@@ -14,7 +15,17 @@ class OTPVerificationScreen extends StatefulWidget {
 }
 
 class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
+  int _remainingSeconds = 60;
+  Timer? _timer;
+  bool _canResend = false;
   final TextEditingController _otpTEController=TextEditingController();
+
+
+  @override
+  void initState() {
+    super.initState();
+    startCountdown();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,15 +77,51 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               ),
               text: 'This Code Will expire in ',
               children: [
-                TextSpan(text: '120s',style:TextStyle(color: AppColors.themeColor))//todo countdown 120 second
+                TextSpan(text: '${_remainingSeconds}s',style:TextStyle(color: AppColors.themeColor))
               ]
             ),),
             const SizedBox(height: 16),
-            TextButton(onPressed: (){}, child: Text('Resend code'))
+            _canResend ? TextButton(
+              onPressed: onResendPressed,
+              child: Text('Resend code'),
+            ) : AbsorbPointer(
+              absorbing: true,
+              child: TextButton(
+                onPressed: () {},
+                child: Text(
+                  'Resend code', style: TextStyle(color: Colors.grey),
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  void startCountdown() {
+    setState(() {
+      _remainingSeconds = 60;
+      _canResend = false;
+    });
+    _timer?.cancel();
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (_remainingSeconds > 0) {
+        setState(() {
+          _remainingSeconds--;
+        });
+      } else {
+        setState(() {
+          _canResend = true;
+        });
+        timer.cancel();
+      }
+    });
+  }
+
+  void onResendPressed() {
+    // Add your resend logic here (API call, OTP send, etc.)
+    startCountdown(); // Restart countdown
   }
 
   void _onTapNextButton(){
@@ -83,7 +130,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
 
   @override
   void dispose() {
-    super.dispose();
+    _timer?.cancel();
     _otpTEController.dispose();
+    super.dispose();
   }
 }
