@@ -1,4 +1,4 @@
-import 'package:cartzy/presentation/ui/screens/otp_verification_screen.dart';
+import 'package:cartzy/presentation/ui/screens/home_screen.dart';
 import 'package:cartzy/presentation/ui/widgets/app_logo_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -80,7 +80,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
     );
   }
   void _onTapCompleteButton(){
-    Get.to(()=>OTPVerificationScreen());
+    Get.to(()=>HomeScreen());
   }
 
   @override
