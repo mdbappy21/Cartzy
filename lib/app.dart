@@ -41,7 +41,7 @@ class _CartzyState extends State<Cartzy> {
             backgroundColor: AppColors.themeColor,
             foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(8),
             ),
             textStyle: TextStyle(fontSize: 16),
             fixedSize: Size.fromWidth(double.maxFinite),

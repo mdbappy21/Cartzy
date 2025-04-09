@@ -108,7 +108,7 @@ packages:
     source: hosted
     version: "4.7.2"
   http:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: http
       sha256: fe7ab022b76f3034adc518fb6ea04a82387620e19977665ea18d30a1cf43442f
@@ -123,6 +123,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.2"
+  item_count_number_button:
+    dependency: "direct main"
+    description:
+      name: item_count_number_button
+      sha256: b83ce20dd013e3004bb66a0f4240d20b392d9bcf43dbbea1ce03b3220eee6a13
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.9.2"
   leak_tracker:
     dependency: transitive
     description:
@@ -155,6 +163,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.1.1"
+  logger:
+    dependency: "direct main"
+    description:
+      name: logger
+      sha256: be4b23575aac7ebf01f225a241eb7f6b5641eeaf43c6a8613510fc2f8cf187d1
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.0"
   matcher:
     dependency: transitive
     description:

@@ -1,4 +1,5 @@
-import 'package:cartzy/presentation/ui/screens/category_list_screen.dart';
+import 'package:cartzy/presentation/state_holders/bottom_nav_bar_controller.dart';
+import 'package:cartzy/presentation/state_holders/slider_list_controller.dart';
 import 'package:cartzy/presentation/ui/utils/assets_path.dart';
 import 'package:cartzy/presentation/ui/widgets/export_import_file.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+    Get.find<SliderListController>().getSliderList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       children: [
         SectionHeader(title: 'Categories', onTap: () {
-          Get.to(()=>CategoryListScreen());
+          Get.find<BottomNavBarController>().selectCategory();
         }),
         const SizedBox(height: 8),
         SizedBox(height: 120, child: _buildCategoriesListView()),
@@ -93,9 +101,9 @@ class _HomeScreenState extends State<HomeScreen> {
       actions: [
         AppBarIconButton(iconData: Icons.person, onTap: () {}),
         const SizedBox(width: 8),
-        AppBarIconButton(iconData: Icons.person, onTap: () {}),
+        AppBarIconButton(iconData: Icons.phone, onTap: () {}),
         const SizedBox(width: 8),
-        AppBarIconButton(iconData: Icons.person, onTap: () {}),
+        AppBarIconButton(iconData: Icons.notifications_active, onTap: () {}),
         const SizedBox(width: 8),
       ],
     );

@@ -1,187 +1,151 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cartzy/data/models/slider_model.dart';
+import 'package:cartzy/presentation/state_holders/slider_list_controller.dart';
 import 'package:cartzy/presentation/ui/utils/app_colors.dart';
+import 'package:cartzy/presentation/ui/widgets/centered_circular_progress_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class HomeBannerSlider extends StatefulWidget {
-  const HomeBannerSlider({
-    super.key,
-  });
+  const HomeBannerSlider({super.key});
 
   @override
   State<HomeBannerSlider> createState() => _HomeBannerSliderState();
 }
 
 class _HomeBannerSliderState extends State<HomeBannerSlider> {
-  // final ValueNotifier<int>_selectedIndex=ValueNotifier(0);
-
-  List topPicksArr = [
-    {
-      "name": "The Dissapearance of Emila Zola",
-      "author": "Michael Rosen",
-      "img": "assets/images/1.jpg"
-    },
-    {
-      "name": "Fatherhood",
-      "author": "Marcus Berkmann",
-      "img": "assets/images/2.jpg"
-    },
-    {
-      "name": "The Time Travellers Handbook",
-      "author": "Stride Lottie",
-      "img": "assets/images/3.jpg"
-    }
-  ];
-
+  final ValueNotifier<int> _selectedIndex = ValueNotifier(0);
   @override
   Widget build(BuildContext context) {
-    var media = MediaQuery.of(context).size;
-    return Column(
-      children: [
-        // CarouselSlider(
-        //   options: CarouselOptions(height: 180,onPageChanged:(index,reason){
-        //     _selectedIndex.value=index;
-        //   }),
-        //   items: [1,2,3,4,5].map((i) {
-        //     return Builder(
-        //       builder: (BuildContext context) {
-        //         return Container(
-        //             width: MediaQuery.of(context).size.width,
-        //             margin: EdgeInsets.symmetric(horizontal: 5.0),
-        //             decoration: BoxDecoration(
-        //                 color: AppColors.themeColor
-        //             ),
-        //             alignment: Alignment.center,
-        //             child: Text('text $i', style: TextStyle(fontSize: 16.0,),)
-        //         );
-        //       },
-        //     );
-        //   }).toList(),
-        // ),
-
-        SizedBox(
-          width: media.width,
-          height: media.width * 0.7,
-          child: CarouselSlider.builder(
-            itemCount: topPicksArr.length,
-            itemBuilder: (BuildContext context, int itemIndex,
-                int pageViewIndex) {
-              var iObj = topPicksArr[itemIndex] as Map? ?? {};
-              return TopPicksCell(
-                iObj: iObj,
-              );
-            },
-            options: CarouselOptions(
-              autoPlay: false,
-              aspectRatio: 1,
-              enlargeCenterPage: true,
-              viewportFraction: 0.45,
-              enlargeFactor: 0.5,
-              enlargeStrategy: CenterPageEnlargeStrategy.zoom,
-            ),
+    return GetBuilder<SliderListController>(
+      builder: (SliderListController) {
+        return Visibility(
+          visible: !SliderListController.inProgress,
+          replacement: const SizedBox(
+            height: 200,
+            child: CenteredCircularProgressIndicator(),
           ),
-        ),
+          child: Column(
+            children: [
+              _buildCarouselSlider(SliderListController),
+              const SizedBox(height: 8),
+              _buildCarouselDots(SliderListController),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
+  Widget _buildCarouselSlider(SliderListController SliderListController,) {
+    return CarouselSlider(
+      options: CarouselOptions(
+        viewportFraction: 0.9,
+        height: 180,
+        onPageChanged: (index, reason) {
+          _selectedIndex.value = index;
+        },
+      ),
+      items: SliderListController.sliders.map((slider) {
+        return Builder(
+          builder: (BuildContext context) {
+            return Container(
+              width: MediaQuery.of(context).size.width,
+              margin: EdgeInsets.symmetric(horizontal: 3),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
+              child: _buildSliderProperties(slider, context),
+            );
+          },
+        );
+      },).toList(),
+    );
+  }
 
-
-
-
-
-
-
-
-
-
-
-        //
-        // const SizedBox(height: 8),
-        // ValueListenableBuilder(
-        //   valueListenable: _selectedIndex,
-        //   builder: (context,currentIndex,_) {
-        //     return Row(
-        //       mainAxisAlignment: MainAxisAlignment.center,
-        //       children: [
-        //         for(int i=0;i<5;i++)
-        //           Container(
-        //             height: 12,
-        //             width: 12,
-        //             margin: EdgeInsets.only(right: 4),
-        //             decoration: BoxDecoration(
-        //                 color: _selectedIndex.value==i? AppColors.themeColor:null,
-        //                 borderRadius: BorderRadius.circular(12),
-        //                 border: Border.all(color: Colors.grey)
-        //             ),
-        //           )
-        //       ],
-        //     );
-        //   },
-        // )
-
+  Widget _buildSliderProperties(SliderModel slider, BuildContext context) {
+    return Stack(
+      children: [
+        _buildSliderImage(slider, context),
+        _buildPriceDiscountText(slider, context),
+        _buildBuybutton(),
       ],
     );
   }
-}
 
+  Widget _buildSliderImage(SliderModel slider, BuildContext context) {
+    return Image.network(
+      slider.image ?? '',
+      width: MediaQuery.of(context).size.width * 0.95, height: 180,
+      fit: BoxFit.fitHeight,
+      alignment: Alignment(0.8, 0.8),
+    );
+  }
 
+  Widget _buildPriceDiscountText(SliderModel slider, BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        SizedBox(height: 4),
+        Align(
+          alignment: Alignment.center,
+          child: Text(
+            slider.price ?? '',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                color: AppColors.themeColor,
+                fontWeight: FontWeight.w600
+            ),
+          ),
+        ),
+        SizedBox(height: 16)
+      ],
+    );
+  }
 
+  Widget _buildBuybutton() {
+    return Positioned(
+      bottom: 16,
+      right: 16,
+      child: SizedBox(
+        width: 120,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.white,
+            foregroundColor: AppColors.themeColor,
+          ),
+          onPressed: () {},
+          child: Text('Buy Now'),
+        ),
+      ),
+    );
+  }
 
-
-class TopPicksCell extends StatelessWidget {
-  final Map iObj;
-  const TopPicksCell({super.key, required this.iObj});
-
-  @override
-  Widget build(BuildContext context) {
-
-    var media = MediaQuery.of(context).size;
-    return SizedBox(
-      // color: Colors.red,
-        width: media.width * 0.50,
-        child: Column(
+  Widget _buildCarouselDots(SliderListController SliderListController) {
+    return ValueListenableBuilder(
+      valueListenable: _selectedIndex,
+      builder: (context, currentIndex, _) {
+        return Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: const [
-                    BoxShadow(
-                        color: Colors.black38,
-                        offset: Offset(0, 2),
-                        blurRadius: 5)
-                  ]),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.asset(
-                  iObj["img"].toString(),
-                  width: media.width * 0.32,
-                  height: media.width * 0.50,
-                  fit: BoxFit.cover,
+            for (int i = 0; i < SliderListController.sliders.length; i++)
+              Container(
+                height: 12,
+                width: 12,
+                margin: EdgeInsets.only(right: 4),
+                decoration: BoxDecoration(
+                  color:
+                      _selectedIndex.value == i ? AppColors.themeColor : null,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            Text(
-              iObj["name"].toString(),
-              maxLines: 3,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700),
-            ),
-            Text(
-              iObj["author"].toString(),
-              maxLines: 1,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.black54,
-                fontSize: 11,
-              ),
-            )
           ],
-        ));
+        );
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _selectedIndex.dispose();
+    super.dispose();
   }
 }
