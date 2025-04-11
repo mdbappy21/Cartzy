@@ -1,4 +1,9 @@
 import 'package:cartzy/presentation/state_holders/bottom_nav_bar_controller.dart';
+import 'package:cartzy/presentation/state_holders/category_list_controller.dart';
+import 'package:cartzy/presentation/state_holders/new_product_list_controller.dart';
+import 'package:cartzy/presentation/state_holders/popular_product_list_controller.dart';
+import 'package:cartzy/presentation/state_holders/slider_list_controller.dart';
+import 'package:cartzy/presentation/state_holders/special_product_list_controller.dart';
 import 'package:cartzy/presentation/ui/screens/cart_screen.dart';
 import 'package:cartzy/presentation/ui/screens/category_list_screen.dart';
 import 'package:cartzy/presentation/ui/screens/home_screen.dart';
@@ -23,6 +28,16 @@ class _MainBottomNavScreenState extends State<MainBottomNavScreen> {
     CartScreen(),
     WishListScreen(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    Get.find<SliderListController>().getSliderList();
+    Get.find<CategoryListController>().getCategoryList();
+    Get.find<NewProductListController>().getNewProductList();
+    Get.find<PopularProductListController>().getPopularProductList();
+    Get.find<SpecialProductListController>().getSpecialProductList();
+  }
 
   @override
   Widget build(BuildContext context) {

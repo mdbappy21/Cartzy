@@ -1,12 +1,18 @@
+import 'package:cartzy/data/models/product_details_model.dart';
+import 'package:cartzy/presentation/state_holders/product_details_controller.dart';
 import 'package:cartzy/presentation/ui/utils/app_colors.dart';
+import 'package:cartzy/presentation/ui/widgets/centered_circular_progress_indicator.dart';
 import 'package:cartzy/presentation/ui/widgets/color_picker.dart';
 import 'package:cartzy/presentation/ui/widgets/product_image_slider.dart';
 import 'package:cartzy/presentation/ui/widgets/size_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:item_count_number_button/item_count_number_button.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
-  const ProductDetailsScreen({super.key});
+  const ProductDetailsScreen({super.key, required this.productId});
+
+  final int productId;
 
   @override
   State<ProductDetailsScreen> createState() => _ProductDetailsScreenState();
@@ -14,45 +20,69 @@ class ProductDetailsScreen extends StatefulWidget {
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   @override
+  void initState() {
+    super.initState();
+    Get.find<ProductDetailsController>().getProductDetails(widget.productId);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Product Details')),
-      body: Column(
-        children: [
-          Expanded(
-            child: _buildProductDetails(),
-          ),
-          _buildPriceAndAddToCardSection()
-        ],
+      body: GetBuilder<ProductDetailsController>(
+        builder: (productDetailsController) {
+          if (productDetailsController.inProgress) {
+            return CenteredCircularProgressIndicator();
+          }
+          if (productDetailsController.errorMassage != null) {
+            return Center(child: Text(productDetailsController.errorMassage!));
+          }
+
+          return Column(
+            children: [
+              Expanded(
+                child: _buildProductDetails(productDetailsController.product!),
+              ),
+              _buildPriceAndAddToCardSection(productDetailsController.product!),
+            ],
+          );
+        },
       ),
     );
   }
 
-  Widget _buildProductDetails() {
+  Widget _buildProductDetails(ProductDetailsModel productDetails) {
     return SingleChildScrollView(
       child: Column(
         children: [
-          ProductImageSlider(),
+          ProductImageSlider(
+            sliderUrls: [
+              productDetails.img1!,
+              productDetails.img2!,
+              productDetails.img3!,
+              productDetails.img4!,
+            ],
+          ),
           Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildNameAndQuantityCounter(),
+                _buildNameAndQuantityCounter(productDetails),
                 SizedBox(height: 4),
-                _buildRatingAndReview(),
+                _buildRatingAndReview(productDetails),
                 SizedBox(height: 8),
                 ColorPicker(
-                  colors: [Colors.red, Colors.black, Colors.green, Colors.orange,],
+                  colorNames: productDetails.color!.split(','),
                   onColorSelected: (color) {},
                 ),
                 SizedBox(height: 16),
                 SizePicker(
-                  sizes: ['M', 'L', 'XL', 'XXL'],
+                  sizes: productDetails.size!.split(','),
                   onSizeSelected: (String selectedSize) {},
                 ),
                 const SizedBox(height: 16),
-                _buildDescriptionSection(),
+                _buildDescriptionSection(productDetails),
               ],
             ),
           ),
@@ -61,37 +91,25 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     );
   }
 
-  Column _buildDescriptionSection() {
+  Column _buildDescriptionSection(ProductDetailsModel productDetails) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Description',
-          style: Theme
-              .of(context)
-              .textTheme
-              .titleMedium,
-        ),
+        Text('Description', style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 8),
-        Text(
-          '''This versatile shoe combines modern style with exceptional comfort. Crafted with a breathable mesh upper, cushioned insole, and durable non-slip rubber sole, it ensures all-day support and stability. Perfect for both casual outings and active use, it’s designed to keep you comfortable, stylish, and confident with every step.''',
-          style: TextStyle(color: Colors.black45),
-        ),
+        Text(productDetails.des ?? '', style: TextStyle(color: Colors.black45)),
       ],
     );
   }
 
-  Widget _buildNameAndQuantityCounter() {
+  Widget _buildNameAndQuantityCounter(ProductDetailsModel productDetails) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
           child: Text(
-            'Shoe 2025 latest model - New year spacial deal.',
-            style: Theme
-                .of(context)
-                .textTheme
-                .titleMedium,
+            productDetails.product?.title ?? '',
+            style: Theme.of(context).textTheme.titleMedium,
           ),
         ),
         ItemCount(
@@ -106,7 +124,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     );
   }
 
-  Widget _buildRatingAndReview() {
+  Widget _buildRatingAndReview(ProductDetailsModel productDetails) {
     return Wrap(
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
@@ -115,7 +133,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           children: [
             Icon(Icons.star, color: Colors.amber, size: 16),
             Text(
-              '3.8',
+              '${productDetails.product?.star}',
               style: TextStyle(
                 fontWeight: FontWeight.w500,
                 color: Colors.black54,
@@ -139,9 +157,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         const SizedBox(width: 8),
         Card(
           color: AppColors.themeColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(4),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
           child: Padding(
             padding: const EdgeInsets.all(4.0),
             child: Icon(
@@ -155,15 +171,15 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     );
   }
 
-  Widget _buildPriceAndAddToCardSection() {
+  Widget _buildPriceAndAddToCardSection(ProductDetailsModel productDetails) {
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-          color: AppColors.themeColor.withOpacity(0.1),
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(8),
-            topRight: Radius.circular(8),
-          )
+        color: AppColors.themeColor.withOpacity(0.1),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(8),
+          topRight: Radius.circular(8),
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -172,17 +188,22 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Price'),
-              Text('\$100', style: TextStyle(
+              Text(
+                '\$${productDetails.product?.price}',
+                style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.themeColor
-              ),)
-            ],),
-          SizedBox(width: 140,
+                  color: AppColors.themeColor,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            width: 140,
             child: ElevatedButton(
-              onPressed: () {}, style: ElevatedButton.styleFrom(
-                fixedSize: Size(140, 50)
-            ), child: Text('Add to Cart'),
+              onPressed: () {},
+              style: ElevatedButton.styleFrom(fixedSize: Size(140, 50)),
+              child: Text('Add to Cart'),
             ),
           ),
         ],
