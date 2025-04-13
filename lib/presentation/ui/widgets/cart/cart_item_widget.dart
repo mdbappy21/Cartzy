@@ -3,9 +3,15 @@ import 'package:cartzy/presentation/ui/utils/assets_path.dart';
 import 'package:flutter/material.dart';
 import 'package:item_count_number_button/item_count_number_button.dart';
 
-class CartItemWidget extends StatelessWidget {
+class CartItemWidget extends StatefulWidget {
   const CartItemWidget({super.key});
 
+  @override
+  State<CartItemWidget> createState() => _CartItemWidgetState();
+}
+
+class _CartItemWidgetState extends State<CartItemWidget> {
+  int _quantity=1;
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -59,12 +65,15 @@ class CartItemWidget extends StatelessWidget {
       children: [
         Text('\$ 100', style: Theme.of(context).textTheme.titleMedium),
         ItemCount(
-          initialValue: 1,
+          initialValue: _quantity,
           minValue: 0,
           maxValue: 20,
           decimalPlaces: 0,
           color: AppColors.themeColor,
-          onChanged: (value) {},
+          onChanged: (value) {
+            _quantity=value.toInt();
+            setState(() {});
+          },
         ),
       ],
     );

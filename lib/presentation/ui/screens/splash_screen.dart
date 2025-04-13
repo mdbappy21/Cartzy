@@ -1,3 +1,4 @@
+import 'package:cartzy/presentation/state_holders/auth_controler.dart';
 import 'package:cartzy/presentation/ui/screens/email_verification_screen.dart';
 import 'package:cartzy/presentation/ui/screens/home_screen.dart';
 import 'package:cartzy/presentation/ui/screens/main_bottom_nav_screen.dart';
@@ -16,6 +17,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void>_moveToNextScreen()async{
     await Future.delayed(const Duration(seconds: 3));
+    await Get.find<AuthController>().getAccessToken();
     Get.off(() => MainBottomNavScreen());
   }
 

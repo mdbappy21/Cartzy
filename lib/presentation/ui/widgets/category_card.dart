@@ -27,7 +27,7 @@ class CategoryCard extends StatelessWidget {
             ),
             child: Image.network(
               categoryModel.categoryImg ?? '',
-              width: MediaQuery.of(context).size.width * 0.15, height: 50,
+              width: 48,
               fit: BoxFit.fitHeight,
               alignment: Alignment(0.8, 0.8),
             ),

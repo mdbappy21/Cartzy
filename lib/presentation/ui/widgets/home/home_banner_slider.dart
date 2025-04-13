@@ -66,7 +66,7 @@ class _HomeBannerSliderState extends State<HomeBannerSlider> {
       children: [
         _buildSliderImage(slider, context),
         _buildPriceDiscountText(slider, context),
-        _buildBuybutton(),
+        _buildBuyButton(),
       ],
     );
   }
@@ -100,7 +100,7 @@ class _HomeBannerSliderState extends State<HomeBannerSlider> {
     );
   }
 
-  Widget _buildBuybutton() {
+  Widget _buildBuyButton() {
     return Positioned(
       bottom: 16,
       right: 16,

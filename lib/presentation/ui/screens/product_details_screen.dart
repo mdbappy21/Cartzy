@@ -1,6 +1,10 @@
 import 'package:cartzy/data/models/product_details_model.dart';
+import 'package:cartzy/presentation/state_holders/add_to_cart_controller.dart';
+import 'package:cartzy/presentation/state_holders/auth_controler.dart';
 import 'package:cartzy/presentation/state_holders/product_details_controller.dart';
+import 'package:cartzy/presentation/ui/screens/email_verification_screen.dart';
 import 'package:cartzy/presentation/ui/utils/app_colors.dart';
+import 'package:cartzy/presentation/ui/utils/snack_massage.dart';
 import 'package:cartzy/presentation/ui/widgets/centered_circular_progress_indicator.dart';
 import 'package:cartzy/presentation/ui/widgets/color_picker.dart';
 import 'package:cartzy/presentation/ui/widgets/product_image_slider.dart';
@@ -19,6 +23,10 @@ class ProductDetailsScreen extends StatefulWidget {
 }
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
+  String _selectedColor = '';
+  String _selectedSize = '';
+  int _quantity = 1;
+
   @override
   void initState() {
     super.initState();
@@ -52,6 +60,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   }
 
   Widget _buildProductDetails(ProductDetailsModel productDetails) {
+    List<String> colors=productDetails.color!.split(',');
+    List<String> size=productDetails.size!.split(',');
+    _selectedColor=colors.first;
+    _selectedSize=size.first;
+
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -73,13 +86,17 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 _buildRatingAndReview(productDetails),
                 SizedBox(height: 8),
                 ColorPicker(
-                  colorNames: productDetails.color!.split(','),
-                  onColorSelected: (color) {},
+                  colorNames: colors,
+                  onColorSelected: (color) {
+                    _selectedColor;
+                  },
                 ),
                 SizedBox(height: 16),
                 SizePicker(
-                  sizes: productDetails.size!.split(','),
-                  onSizeSelected: (String selectedSize) {},
+                  sizes: size,
+                  onSizeSelected: (String selectedSize) {
+                    _selectedSize;
+                  },
                 ),
                 const SizedBox(height: 16),
                 _buildDescriptionSection(productDetails),
@@ -113,12 +130,15 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           ),
         ),
         ItemCount(
-          initialValue: 1,
-          minValue: 0,
+          initialValue: _quantity,
+          minValue: 1,
           maxValue: 20,
           decimalPlaces: 0,
           color: AppColors.themeColor,
-          onChanged: (value) {},
+          onChanged: (value) {
+            _quantity = value.toInt();
+            setState(() {});
+          },
         ),
       ],
     );
@@ -200,14 +220,41 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           ),
           SizedBox(
             width: 140,
-            child: ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(fixedSize: Size(140, 50)),
-              child: Text('Add to Cart'),
+            child: GetBuilder<AddToCartController>(
+              builder: (addToCartController) {
+                return Visibility(
+                  visible: !addToCartController.inProgress,
+                  replacement: const CenteredCircularProgressIndicator(),
+                  child: ElevatedButton(
+                    onPressed: _onTapAddToCart,
+                    style: ElevatedButton.styleFrom(fixedSize: Size(140, 50)),
+                    child: Text('Add to Cart'),
+                  ),
+                );
+              },
             ),
           ),
         ],
       ),
     );
+  }
+
+  Future<void> _onTapAddToCart() async {
+    bool isLoggedInUser = Get.find<AuthController>().isLoggedInUser();
+    if (isLoggedInUser) {
+      final result = await Get.find<AddToCartController>().addToCart(
+          widget.productId, _selectedColor, _selectedSize, _quantity);
+      if (result) {
+        if (mounted) {
+          showSnackBarMassage('Added to cart');
+        }
+      } else {
+        if (mounted) {
+          showSnackBarMassage(Get.find<AddToCartController>().errorMassage!, true,);
+        }
+      }
+    } else {
+      Get.to(() => EmailVerificationScreen());
+    }
   }
 }
