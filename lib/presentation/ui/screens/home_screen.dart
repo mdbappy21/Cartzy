@@ -1,5 +1,5 @@
 import 'package:cartzy/presentation/UI/screens/email_verification_screen.dart';
-import 'package:cartzy/presentation/state_holders/auth_controler.dart';
+import 'package:cartzy/presentation/state_holders/auth_controller.dart';
 import 'package:cartzy/presentation/state_holders/bottom_nav_bar_controller.dart';
 import 'package:cartzy/presentation/state_holders/category_list_controller.dart';
 import 'package:cartzy/presentation/state_holders/new_product_list_controller.dart';

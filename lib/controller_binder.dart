@@ -1,8 +1,11 @@
 import 'package:cartzy/data/services/network_caller.dart';
 import 'package:cartzy/presentation/state_holders/add_to_cart_controller.dart';
-import 'package:cartzy/presentation/state_holders/auth_controler.dart';
+import 'package:cartzy/presentation/state_holders/auth_controller.dart';
 import 'package:cartzy/presentation/state_holders/bottom_nav_bar_controller.dart';
+import 'package:cartzy/presentation/state_holders/cart_delete_controller.dart';
+import 'package:cartzy/presentation/state_holders/cart_list_controller.dart';
 import 'package:cartzy/presentation/state_holders/category_list_controller.dart';
+import 'package:cartzy/presentation/state_holders/create_cart_controller.dart';
 import 'package:cartzy/presentation/state_holders/create_profile_controller.dart';
 import 'package:cartzy/presentation/state_holders/email_verification_controller.dart';
 import 'package:cartzy/presentation/state_holders/new_product_list_controller.dart';
@@ -35,5 +38,8 @@ class ControllerBinder extends Bindings {
     Get.put(OtpVerificationController());
     Get.put(ReadProfileController());
     Get.lazyPut(()=>CreateProfileController(), fenix: true);
+    Get.put(CreateCartController());
+    Get.put(CartDeleteController());
+    Get.lazyPut(()=>CartListController(), fenix: true);
   }
 }

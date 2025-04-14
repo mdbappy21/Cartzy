@@ -1,9 +1,17 @@
-import 'package:cartzy/presentation/state_holders/bottom_nav_bar_controller.dart';
-import 'package:cartzy/presentation/ui/utils/app_colors.dart';
-import 'package:cartzy/presentation/ui/widgets/cart/cart_item_widget.dart';
+import 'package:cartzy/presentation/state_holders/cart_delete_controller.dart';
+import 'package:cartzy/presentation/state_holders/cart_list_controller.dart';
+import 'package:cartzy/presentation/state_holders/create_cart_controller.dart';
+import 'package:cartzy/data/utills/urls.dart';
+import 'package:cartzy/presentation/ui/screens/email_verification_screen.dart';
+import 'package:cartzy/presentation/ui/utils/snack_massage.dart';
+import 'package:cartzy/presentation/ui/widgets/centered_circular_progress_indicator.dart';
+import 'package:cartzy/presentation/ui/widgets/icon_back_button.dart';
+import 'package:cartzy/presentation/ui/widgets/product_amount_picker.dart';
+import 'package:cartzy/presentation/ui/widgets/total_price_and_proceed.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
+import 'package:cartzy/data/models/add_to_cart.dart';
+import 'package:cartzy/presentation/ui/utils/navigation_controller.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -13,69 +21,86 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
+  Future<void> _initializer() async {
+    bool check = await Get.find<CartListController>().getCarts();
+    if (check == false) {
+      showSnackBarMassage('Please Login!', true);
+      Get.to(() => const EmailVerificationScreen());
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _initializer();
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (value, _) {
-        backToHome();
+        Get.find<NavigationController>().goToHomeScreen();
       },
       child: Scaffold(
-        backgroundColor: Colors.grey.shade100,
         appBar: AppBar(
-          title: Text('Cart'),
-          leading: IconButton(
-            onPressed: backToHome,
-            icon: Icon(Icons.arrow_back_ios),
+          title: Text('Cart',
+            style: Theme.of(context,).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.w500),
+          ),
+          leading: IconBackButton(
+            whereToBack: () {
+              Get.find<NavigationController>().goToHomeScreen();
+            },
           ),
         ),
-        body: Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                itemCount: 2,
-                itemBuilder: (context, index) {
-                  return CartItemWidget();
-                },
+
+        body: GetBuilder<CartListController>(
+          builder: (cartListController) {
+            return Visibility(
+              visible: !cartListController.loading && !Get.find<CreateCartController>().loading,
+              replacement: const CenteredCircularProgressIndicator(),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: ListView.separated(
+                        itemBuilder: (context, index) {
+                          return _buildProductCard(cartListController, index, context);
+                        },
+                        separatorBuilder: (context, index) {
+                          return const SizedBox(height: 8);
+                        },
+                        itemCount: cartListController.carts.length,
+                      ),
+                    ),
+                  ),
+                  _buildTotalPriceAndCheckout(cartListController),
+                ],
               ),
-            ),
-            Container(
-              child: _buildPriceAndAddToCardSection(),
-            ),
-          ],
+            );
+          },
         ),
       ),
     );
   }
 
-  Widget _buildPriceAndAddToCardSection() {
-    return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-          color: AppColors.themeColor.withOpacity(0.1),
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(8),
-            topRight: Radius.circular(8),
-          )
-      ),
+  Widget _buildProductCard(CartListController cartListController, int index, BuildContext context) {
+    return Card(
+      color: Colors.grey.shade50,
+      elevation: 1,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Price'),
-              Text('\$100', style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.themeColor
-              ),)
-            ],),
-          SizedBox(width: 140,
-            child: ElevatedButton(
-              onPressed: () {}, style: ElevatedButton.styleFrom(
-                fixedSize: Size(140, 50)
-            ), child: Text('Check Out'),
+          _buildProductImage(cartListController, index),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildProductTitleAndDeleteCartButton(cartListController, index, context),
+                _buildSizeColorAndUnitPrice(cartListController, index, context),
+                _buildTotalPriceAndItemCount(cartListController, index, context),
+              ],
             ),
           ),
         ],
@@ -83,8 +108,143 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  void backToHome() {
-    Get.find<BottomNavBarController>().backToHome();
+  Widget _buildTotalPriceAndItemCount(CartListController cartListController, int index, BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text('\$${cartListController.carts[index].price}',
+          style: TextStyle(color: Colors.teal,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        _buildQuantityCounter(cartListController, index, context),
+      ],
+    );
+  }
+
+  Widget _buildSizeColorAndUnitPrice(CartListController cartListController, int index, BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Color: ${cartListController.carts[index].color}    Size: ${cartListController.carts[index].size}',
+          style: Theme.of(context,).textTheme.bodySmall,
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Unit Price: \$${(double.parse(cartListController.carts[index].price.toString()) /
+              double.parse(cartListController.carts[index].qty.toString()))}',
+        ),
+      ],
+    );
+  }
+
+  Widget _buildQuantityCounter(CartListController cartListController, int index, BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 6,),
+      child: ProductAmountPicker(
+        itemBuyingAmount: int.parse(cartListController.carts[index].qty ?? '0',),
+        plusButtonOnPressed: () async {
+          bool check = await Get.find<CreateCartController>().createCart(
+            AddToCart(
+              productId: cartListController.carts[index].productId,
+              color: cartListController.carts[index].color,
+              size: cartListController.carts[index].size,
+              qty: int.parse(cartListController.carts[index].qty ?? '0',) + 1,
+            ),
+          );
+          if (check) {
+            await cartListController.getCarts();
+          } else {
+            bottomPopUpMessage(context, 'Please login to your profile!',);
+            Get.to(() => const EmailVerificationScreen());
+          }
+        },
+        minusButtonOnPressed: () async {
+          if (int.parse(cartListController.carts[index].qty ?? '1',) > 1) {
+            bool check = await Get.find<CreateCartController>().createCart(
+              AddToCart(
+                productId: cartListController.carts[index].productId,
+                color: cartListController.carts[index].color,
+                size: cartListController.carts[index].size,
+                qty: int.parse(cartListController.carts[index].qty ?? '0',) - 1,
+              ),
+            );
+            if (check) {
+              await cartListController.getCarts();
+            } else {
+              bottomPopUpMessage(context, 'Please login to your profile!',);
+              Get.to(() => const EmailVerificationScreen(),);
+            }
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _buildProductTitleAndDeleteCartButton(CartListController cartListController, int index, BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(
+          child: Text(
+            cartListController.carts[index].product?.title ?? 'Error',
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context,).textTheme.labelLarge!.copyWith(color: Colors.black87,),
+          ),
+        ),
+        GetBuilder<CartDeleteController>(
+          builder: (cartDeleteController) {
+            return Visibility(
+              visible: !cartDeleteController.inProgress,
+              replacement: CircularProgressIndicator(),
+              child: IconButton(
+                onPressed: () async {
+                  bool check = await cartDeleteController.deleteACart(
+                    productId: Get.find<CartListController>().carts[index].productId.toString(),);
+                  if (check) {
+                    bottomPopUpMessage(context, 'Deleted',);
+                    _initializer();
+                  } else {
+                    bottomPopUpMessage(context, 'Please Login!',);
+                    Get.to(const EmailVerificationScreen(),);
+                  }
+                },
+                icon: Icon(Icons.delete_outlined, color: Colors.red.shade300,),
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProductImage(CartListController controller, int index) {
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: NetworkImage(
+            controller.carts[index].product?.image ?? Urls.dummyImage,
+          ),
+          fit: BoxFit.cover,
+        ),
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(10),
+          bottomLeft: Radius.circular(10),
+        ),
+      ),
+      height: 90,
+      width: 90,
+    );
+  }
+
+  Widget _buildTotalPriceAndCheckout(CartListController controller) {
+    return TotalPriceAndProceed(
+      totalPrice: (controller.totalPrice),
+      buttonOnTap: () {},
+      buttonLabel: 'Checkout',
+    );
   }
 }
-

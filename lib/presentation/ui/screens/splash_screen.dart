@@ -1,4 +1,4 @@
-import 'package:cartzy/presentation/state_holders/auth_controler.dart';
+import 'package:cartzy/presentation/state_holders/auth_controller.dart';
 import 'package:cartzy/presentation/ui/screens/email_verification_screen.dart';
 import 'package:cartzy/presentation/ui/screens/home_screen.dart';
 import 'package:cartzy/presentation/ui/screens/main_bottom_nav_screen.dart';

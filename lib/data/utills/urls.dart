@@ -12,5 +12,7 @@ class Urls{
   static const String createProfile = '$_baseUrl/CreateProfile';
   static const String createCart = '$_baseUrl/CreateCartList';
   static const String fetchCarts = '$_baseUrl/CartList';
+  static String deleteCart({required String productId}) => '$_baseUrl/DeleteCartList/$productId';
+  static const String dummyImage = 'https://images.pexels.com/photos/4439425/pexels-photo-4439425.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
 
 }

@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:cartzy/data/models/network_response.dart';
-import 'package:cartzy/presentation/state_holders/auth_controler.dart';
+import 'package:cartzy/presentation/state_holders/auth_controller.dart';
 import 'package:cartzy/presentation/ui/screens/email_verification_screen.dart';
 import 'package:get/get.dart' as getx;
 import 'package:http/http.dart';

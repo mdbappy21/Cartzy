@@ -4,7 +4,7 @@ import 'package:cartzy/data/models/product_model.dart';
 import 'package:cartzy/data/models/profile_model.dart';
 import 'package:cartzy/data/services/network_caller.dart';
 import 'package:cartzy/data/utills/urls.dart';
-import 'package:cartzy/presentation/state_holders/auth_controler.dart';
+import 'package:cartzy/presentation/state_holders/auth_controller.dart';
 import 'package:cartzy/presentation/state_holders/profile_info_cache_controller.dart';
 import 'package:get/get.dart';
 

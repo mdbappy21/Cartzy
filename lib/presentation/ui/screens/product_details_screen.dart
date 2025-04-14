@@ -1,6 +1,6 @@
 import 'package:cartzy/data/models/product_details_model.dart';
 import 'package:cartzy/presentation/state_holders/add_to_cart_controller.dart';
-import 'package:cartzy/presentation/state_holders/auth_controler.dart';
+import 'package:cartzy/presentation/state_holders/auth_controller.dart';
 import 'package:cartzy/presentation/state_holders/product_details_controller.dart';
 import 'package:cartzy/presentation/ui/screens/email_verification_screen.dart';
 import 'package:cartzy/presentation/ui/screens/review_screen.dart';

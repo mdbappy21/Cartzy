@@ -2,7 +2,7 @@ import 'package:cartzy/data/models/network_response.dart';
 import 'package:cartzy/data/models/read_profile_data.dart';
 import 'package:cartzy/data/services/network_caller.dart';
 import 'package:cartzy/presentation//state_holders/profile_info_cache_controller.dart';
-import 'package:cartzy/presentation/state_holders/auth_controler.dart';
+import 'package:cartzy/presentation/state_holders/auth_controller.dart';
 import 'package:cartzy/data/utills/urls.dart';
 import 'package:get/get.dart';
 
