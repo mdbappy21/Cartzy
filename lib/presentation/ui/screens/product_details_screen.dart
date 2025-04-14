@@ -3,6 +3,7 @@ import 'package:cartzy/presentation/state_holders/add_to_cart_controller.dart';
 import 'package:cartzy/presentation/state_holders/auth_controler.dart';
 import 'package:cartzy/presentation/state_holders/product_details_controller.dart';
 import 'package:cartzy/presentation/ui/screens/email_verification_screen.dart';
+import 'package:cartzy/presentation/ui/screens/review_screen.dart';
 import 'package:cartzy/presentation/ui/utils/app_colors.dart';
 import 'package:cartzy/presentation/ui/utils/snack_massage.dart';
 import 'package:cartzy/presentation/ui/widgets/centered_circular_progress_indicator.dart';
@@ -163,15 +164,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           ],
         ),
         const SizedBox(width: 8),
-        TextButton(
-          onPressed: () {},
+        GestureDetector(
+          onTap: () {
+            Get.to(() => const ReviewScreen());
+          },
           child: Text(
-            'Review',
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-              color: AppColors.themeColor,
-              fontSize: 16,
-            ),
+            'Reviews',
+            style: Theme.of(context).textTheme.labelLarge!.copyWith(color:AppColors.themeColor),
           ),
         ),
         const SizedBox(width: 8),
