@@ -166,7 +166,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
         if (_readProfileController.isProfileCompleted) {
           Get.offAll(() => MainBottomNavScreen());
         } else {
-          Get.to(() => CompleteProfileScreen());
+          Get.to(() => CompleteProfileScreen(heading: 'Complete profile',readProfileData: null,));
         }
       }else{
         if (mounted) {

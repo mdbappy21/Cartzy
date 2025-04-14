@@ -9,6 +9,7 @@ class Urls{
   static  String productDetailsById(int productId)=>'$_baseUrl/ProductDetailsById/$productId';
   static  String verifyEmail(String email)=>'$_baseUrl/UserLogin/$email';
   static  String verifyOtp(String email,String otp)=>'$_baseUrl/VerifyLogin/$email/$otp';
+  static const String createProfile = '$_baseUrl/CreateProfile';
   static const String createCart = '$_baseUrl/CreateCartList';
   static const String fetchCarts = '$_baseUrl/CartList';
 

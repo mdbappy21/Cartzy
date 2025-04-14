@@ -1,6 +1,7 @@
 import 'package:cartzy/data/models/network_response.dart';
 import 'package:cartzy/data/services/network_caller.dart';
 import 'package:cartzy/data/utills/urls.dart';
+import 'package:cartzy/presentation/state_holders/auth_controler.dart';
 import 'package:get/get.dart';
 
 class OtpVerificationController extends GetxController {
@@ -24,6 +25,7 @@ class OtpVerificationController extends GetxController {
     if (response.isSuccess && response.responseData['msg'] == 'success') {
       _errorMassage = null;
       _accessToken=response.responseData['data'];
+      await Get.find<AuthController>().saveAccessToken(_accessToken);
       isSuccess = true;
     } else {
       _errorMassage = response.errorMassage;

@@ -64,9 +64,7 @@ class NetworkCaller {
     try {
       Uri uri = Uri.parse(url);
       _requestLog(url, {}, body ?? {}, '');
-      final Response response = await post(
-        uri,
-        headers: {
+      final Response response = await post(uri, headers: {
           'token': '${AuthController.accessToken}',
           'content-type': 'application/json',
         },
@@ -74,12 +72,7 @@ class NetworkCaller {
       );
 
       if (response.statusCode == 200) {
-        _responseLog(
-          url,
-          response.statusCode,
-          response.body,
-          response.headers,
-          true,
+        _responseLog(url, response.statusCode, response.body, response.headers, true,
         );
         final decodedBody = jsonDecode(response.body);
         return NetworkResponse(

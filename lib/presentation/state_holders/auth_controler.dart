@@ -24,4 +24,9 @@ class AuthController {
     SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
     await sharedPreferences.clear();
   }
+ Future<void> clearAccessToken() async {
+   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+   await sharedPreferences.remove(_accessTokenKey);
+   accessToken = null;
+ }
 }

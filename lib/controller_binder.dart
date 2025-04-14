@@ -3,6 +3,7 @@ import 'package:cartzy/presentation/state_holders/add_to_cart_controller.dart';
 import 'package:cartzy/presentation/state_holders/auth_controler.dart';
 import 'package:cartzy/presentation/state_holders/bottom_nav_bar_controller.dart';
 import 'package:cartzy/presentation/state_holders/category_list_controller.dart';
+import 'package:cartzy/presentation/state_holders/create_profile_controller.dart';
 import 'package:cartzy/presentation/state_holders/email_verification_controller.dart';
 import 'package:cartzy/presentation/state_holders/new_product_list_controller.dart';
 import 'package:cartzy/presentation/state_holders/otp_verification_controller.dart';
@@ -33,5 +34,6 @@ class ControllerBinder extends Bindings {
     Get.put(EmailVerificationController());
     Get.put(OtpVerificationController());
     Get.put(ReadProfileController());
+    Get.lazyPut(()=>CreateProfileController(), fenix: true);
   }
 }
