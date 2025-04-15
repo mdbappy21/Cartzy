@@ -56,7 +56,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildPopularProductSection() {
     return Column(
       children: [
-        SectionHeader(title: 'Popular', onTap: () {}),
+        SectionHeader(title: 'Popular', onTap: () {
+
+        }),
         SizedBox(
           height: 180,
           child: GetBuilder<PopularProductListController>(
@@ -196,6 +198,7 @@ class _HomeScreenState extends State<HomeScreen> {
           iconData: Icons.logout,
           onTap: () {
             Get.find<AuthController>().clearUserData();
+            AuthController.accessToken=null;
             Get.to(EmailVerificationScreen());
           },
         ),

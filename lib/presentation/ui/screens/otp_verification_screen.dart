@@ -161,19 +161,13 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     if (result) {
       final bool readProfileResult = await _readProfileController
           .getProfileDetails(_otpVerificationController.accessToken);
-
       if (readProfileResult) {
-        if (_readProfileController.isProfileCompleted) {
-          Get.offAll(() => MainBottomNavScreen());
-        } else {
-          Get.to(() => CompleteProfileScreen(heading: 'Complete profile',readProfileData: null,));
-        }
-      }else{
-        if (mounted) {
-          showSnackBarMassage(_readProfileController.errorMassage!);
-        }
+        Get.offAll(() => MainBottomNavScreen());
+      } else {
+        Get.to(() =>
+            CompleteProfileScreen(
+              heading: 'Complete profile', readProfileData: null,));
       }
-
     } else {
       if (mounted) {
         showSnackBarMassage(_readProfileController.errorMassage!);

@@ -227,8 +227,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Price'),
-              Text(
-                '\$${productDetails.product?.price}',
+              Text(  '\$${((double.tryParse(productDetails.product?.price ?? '0') ?? 0) * _quantity).toStringAsFixed(2)}',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,

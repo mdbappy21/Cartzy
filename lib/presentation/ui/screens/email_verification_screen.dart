@@ -98,7 +98,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
   @override
   void dispose() {
-    super.dispose();
     _emailTEController.dispose();
+    super.dispose();
   }
 }
