@@ -30,50 +30,50 @@ class _PaymentScreenState extends State<PaymentScreen> {
             GestureDetector(
               onTap: (){showSnackBarMassage('!! Will be added this option !! Your Bill $totalPrice');},
               child: Image.asset(
-                AssetsPath.bkash, // Replace with your actual path
-                width: 180, // optional
-                height: 130, // optional
-                fit: BoxFit.scaleDown, // optional
+                AssetsPath.bkash,
+                width: 180,
+                height: 130,
+                fit: BoxFit.scaleDown,
               ),
             ),
             const SizedBox(height: 4),
             GestureDetector(
               onTap: (){showSnackBarMassage('!! Will be added this option !! Your Bill $totalPrice');},
               child: Image.asset(
-                AssetsPath.nagad, // Replace with your actual path
-                width: 180, // optional
-                height: 130, // optional
-                fit: BoxFit.scaleDown, // optional
+                AssetsPath.nagad,
+                width: 180, 
+                height: 130, 
+                fit: BoxFit.scaleDown, 
               ),
             ),
             const SizedBox(height: 4),
             GestureDetector(
               onTap: (){showSnackBarMassage('!! Will be added this option !! Your Bill $totalPrice');},
               child: Image.asset(
-                AssetsPath.roket, // Replace with your actual path
-                width: 180, // optional
-                height: 130, // optional
-                fit: BoxFit.scaleDown, // optional
+                AssetsPath.roket,
+                width: 180, 
+                height: 130, 
+                fit: BoxFit.scaleDown, 
               ),
             ),
             const SizedBox(height: 4),
             GestureDetector(
               onTap: (){showSnackBarMassage('!! Will be added this option !! Your Bill $totalPrice');},
               child: Image.asset(
-                AssetsPath.crypto, // Replace with your actual path
-                width: 180, // optional
-                height: 130, // optional
-                fit: BoxFit.scaleDown, // optional
+                AssetsPath.crypto,
+                width: 180, 
+                height: 130, 
+                fit: BoxFit.scaleDown, 
               ),
             ),
             const SizedBox(height: 4),
             GestureDetector(
               onTap: (){showSnackBarMassage('!! Will be added this option !! Your Bill $totalPrice');},
               child: Image.asset(
-                AssetsPath.card, // Replace with your actual path
-                width: 180, // optional
-                height: 130, // optional
-                fit: BoxFit.scaleDown, // optional
+                AssetsPath.card,
+                width: 180, 
+                height: 130, 
+                fit: BoxFit.scaleDown, 
               ),
             ),
           ],
