@@ -1,3 +1,4 @@
+import 'package:cartzy/presentation/state_holders/bottom_nav_bar_controller.dart';
 import 'package:cartzy/presentation/state_holders/cart_delete_controller.dart';
 import 'package:cartzy/presentation/state_holders/cart_list_controller.dart';
 import 'package:cartzy/presentation/state_holders/create_cart_controller.dart';
@@ -11,7 +12,7 @@ import 'package:cartzy/presentation/ui/widgets/total_price_and_proceed.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cartzy/data/models/add_to_cart.dart';
-import 'package:cartzy/presentation/ui/utils/navigation_controller.dart';
+import 'package:lottie/lottie.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -40,16 +41,17 @@ class _CartScreenState extends State<CartScreen> {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (value, _) {
-        Get.find<NavigationController>().goToHomeScreen();
+        backToHome();
       },
       child: Scaffold(
         appBar: AppBar(
           title: Text('Cart',
             style: Theme.of(context,).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.w500),
           ),
+          titleSpacing: 0,
           leading: IconBackButton(
             whereToBack: () {
-              Get.find<NavigationController>().goToHomeScreen();
+              backToHome();
             },
           ),
         ),
@@ -64,7 +66,7 @@ class _CartScreenState extends State<CartScreen> {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: ListView.separated(
+                      child: cartListController.carts.isEmpty ? _buildLottieImage(context): ListView.separated(
                         itemBuilder: (context, index) {
                           return _buildProductCard(cartListController, index, context);
                         },
@@ -81,6 +83,27 @@ class _CartScreenState extends State<CartScreen> {
             );
           },
         ),
+      ),
+    );
+  }
+
+  Widget _buildLottieImage(BuildContext context) {
+    return Align(
+      alignment: Alignment(0, -0.5),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Lottie.asset('assets/lotteries/empty.json',
+            width: 250,
+            height: 300,
+            fit: BoxFit.scaleDown,
+          ),
+          const SizedBox(height: 8),
+          Text('Product List is empty', style: Theme
+              .of(context)
+              .textTheme
+              .titleLarge,),
+        ],
       ),
     );
   }
@@ -246,5 +269,8 @@ class _CartScreenState extends State<CartScreen> {
       buttonOnTap: () {},
       buttonLabel: 'Checkout',
     );
+  }
+  void backToHome() {
+    Get.find<BottomNavBarController>().backToHome();
   }
 }

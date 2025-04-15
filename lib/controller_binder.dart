@@ -16,6 +16,10 @@ import 'package:cartzy/presentation/state_holders/product_list_by_category_contr
 import 'package:cartzy/presentation/state_holders/read_profile_controller.dart';
 import 'package:cartzy/presentation/state_holders/slider_list_controller.dart';
 import 'package:cartzy/presentation/state_holders/special_product_list_controller.dart';
+import 'package:cartzy/presentation/state_holders/wish_list_controller.dart';
+import 'package:cartzy/presentation/state_holders/wish_list_item_delete_controller.dart';
+import 'package:cartzy/presentation/state_holders/wishlist_addition_controller.dart';
+import 'package:cartzy/presentation/ui/utils/navigation_controller.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 
@@ -25,6 +29,7 @@ class ControllerBinder extends Bindings {
     Get.put(BottomNavBarController());
     Get.put(Logger());
     Get.put(AuthController());
+    Get.put(NavigationController());
     Get.put(NetworkCaller(logger: Get.find<Logger>(),authController: Get.find<AuthController>()));
     Get.put(SliderListController());
     Get.put(CategoryListController());
@@ -37,9 +42,12 @@ class ControllerBinder extends Bindings {
     Get.put(EmailVerificationController());
     Get.put(OtpVerificationController());
     Get.put(ReadProfileController());
-    Get.lazyPut(()=>CreateProfileController(), fenix: true);
+    Get.put(CreateProfileController());
     Get.put(CreateCartController());
     Get.put(CartDeleteController());
-    Get.lazyPut(()=>CartListController(), fenix: true);
+    Get.put(CartListController());
+    Get.put(WishlistAdditionController());
+    Get.put(WishListController());
+    Get.put(WishListItemDeleteController());
   }
 }

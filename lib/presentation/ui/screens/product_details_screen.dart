@@ -2,6 +2,7 @@ import 'package:cartzy/data/models/product_details_model.dart';
 import 'package:cartzy/presentation/state_holders/add_to_cart_controller.dart';
 import 'package:cartzy/presentation/state_holders/auth_controller.dart';
 import 'package:cartzy/presentation/state_holders/product_details_controller.dart';
+import 'package:cartzy/presentation/state_holders/wishlist_addition_controller.dart';
 import 'package:cartzy/presentation/ui/screens/email_verification_screen.dart';
 import 'package:cartzy/presentation/ui/screens/review_screen.dart';
 import 'package:cartzy/presentation/ui/utils/app_colors.dart';
@@ -47,20 +48,26 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             return Center(child: Text(productDetailsController.errorMassage!));
           }
 
-          return Column(
-            children: [
-              Expanded(
-                child: _buildProductDetails(productDetailsController.product!),
-              ),
-              _buildPriceAndAddToCardSection(productDetailsController.product!),
-            ],
+          return Visibility(
+            visible: !productDetailsController.inProgress,
+            replacement: CenteredCircularProgressIndicator(),
+            child: Column(
+              children: [
+                Expanded(
+                  child: _buildProductDetails(productDetailsController.product!,productId:widget.productId
+                      .toString() ??
+                      '1'),
+                ),
+                _buildPriceAndAddToCardSection(productDetailsController.product!),
+              ],
+            ),
           );
         },
       ),
     );
   }
 
-  Widget _buildProductDetails(ProductDetailsModel productDetails) {
+  Widget _buildProductDetails(ProductDetailsModel productDetails,{required String productId}) {
     List<String> colors=productDetails.color!.split(',');
     List<String> size=productDetails.size!.split(',');
     _selectedColor=colors.first;
@@ -84,7 +91,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               children: [
                 _buildNameAndQuantityCounter(productDetails),
                 SizedBox(height: 4),
-                _buildRatingAndReview(productDetails),
+                _buildRatingAndReview(productDetails, productId: productId),
                 SizedBox(height: 8),
                 ColorPicker(
                   colorNames: colors,
@@ -145,7 +152,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     );
   }
 
-  Widget _buildRatingAndReview(ProductDetailsModel productDetails) {
+  Widget _buildRatingAndReview(ProductDetailsModel productDetails,{required String productId}) {
     return Wrap(
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
@@ -158,7 +165,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               style: TextStyle(
                 fontWeight: FontWeight.w500,
                 color: Colors.black54,
-                fontSize: 16,
+                fontSize: 20,
               ),
             ),
           ],
@@ -170,19 +177,32 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           },
           child: Text(
             'Reviews',
-            style: Theme.of(context).textTheme.labelLarge!.copyWith(color:AppColors.themeColor),
+            style: Theme.of(context).textTheme.labelLarge!.copyWith(color:AppColors.themeColor,fontSize: 18),
           ),
         ),
-        const SizedBox(width: 8),
-        Card(
-          color: AppColors.themeColor,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-          child: Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: Icon(
-              Icons.favorite_outline_rounded,
-              size: 16,
-              color: Colors.white,
+        const SizedBox(width: 16),
+        GestureDetector(
+          onTap: ()async {
+            bool added = await Get.find<WishlistAdditionController>()
+                .addToWishList(productId: productId);
+            if (added) {
+              showSnackBarMassage('Added to the wishlist!');
+            } else {
+              showSnackBarMassage( 'You have to Login');
+              Get.to(() => const EmailVerificationScreen());
+            }
+          },
+          // color: AppColors.themeColor,
+          // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+          child: Container(
+            height: 24,
+            width: 24,
+            color: AppColors.themeColor,
+            child: Padding(
+              padding: const EdgeInsets.all(4),
+              child: Icon(
+                  Icons.favorite_outline_rounded, size: 16, color: Colors.white,
+              ),
             ),
           ),
         ),

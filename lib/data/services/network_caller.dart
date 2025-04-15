@@ -11,10 +11,7 @@ class NetworkCaller {
   final Logger logger;
   final AuthController authController;
 
-  Future<NetworkResponse> getRequest({
-    required String url,
-    String? token,
-  }) async {
+  Future<NetworkResponse> getRequest({required String url, String? token,}) async {
     try {
       Uri uri = Uri.parse(url);
       _requestLog(url, {}, {}, '');
@@ -57,10 +54,7 @@ class NetworkCaller {
     }
   }
 
-  Future<NetworkResponse> postRequest({
-    required String url,
-    Map<String, dynamic>? body,
-  }) async {
+  Future<NetworkResponse> postRequest({required String url, Map<String, dynamic>? body,}) async {
     try {
       Uri uri = Uri.parse(url);
       _requestLog(url, {}, body ?? {}, '');
@@ -105,28 +99,15 @@ class NetworkCaller {
     getx.Get.to(()=>EmailVerificationScreen());
   }
 
-  void _requestLog(
-    String url,
-    Map<String, dynamic> params,
-    Map<String, dynamic> body,
-    String token,
-  ) {
-    logger.i('''
-    Url:$url
+  void _requestLog(String url, Map<String, dynamic> params, Map<String, dynamic> body, String token,) {
+    logger.i('''Url:$url
     Params:$params
     Body:$body
     Token:$token
     ''');
   }
 
-  void _responseLog(
-    String url,
-    int statusCode,
-    dynamic responseBody,
-    Map<String, dynamic> headers,
-    bool isSuccess, [
-    dynamic error,
-  ]) {
+  void _responseLog(String url, int statusCode, dynamic responseBody, Map<String, dynamic> headers, bool isSuccess, [dynamic error,]) {
     String massage = '''
     Url:$url
     Status Code:$statusCode
