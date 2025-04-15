@@ -4,6 +4,7 @@ import 'package:cartzy/presentation/state_holders/cart_list_controller.dart';
 import 'package:cartzy/presentation/state_holders/create_cart_controller.dart';
 import 'package:cartzy/data/utills/urls.dart';
 import 'package:cartzy/presentation/ui/screens/email_verification_screen.dart';
+import 'package:cartzy/presentation/ui/screens/payment_screen.dart';
 import 'package:cartzy/presentation/ui/utils/snack_massage.dart';
 import 'package:cartzy/presentation/ui/widgets/centered_circular_progress_indicator.dart';
 import 'package:cartzy/presentation/ui/widgets/icon_back_button.dart';
@@ -266,7 +267,9 @@ class _CartScreenState extends State<CartScreen> {
   Widget _buildTotalPriceAndCheckout(CartListController controller) {
     return TotalPriceAndProceed(
       totalPrice: (controller.totalPrice),
-      buttonOnTap: () {},
+      buttonOnTap: () {
+        Get.to(PaymentScreen(totalPrice: '${controller.totalPrice}',));
+      },
       buttonLabel: 'Checkout',
     );
   }
